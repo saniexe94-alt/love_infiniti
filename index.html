@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پەیامێکی تایبەت بۆ سێلین</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #ff758c, #ff7eb3);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Tahoma', sans-serif;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .box {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+            text-align: center;
+            max-width: 420px;
+            width: 90%;
+            z-index: 10;
+            transition: all 0.5s ease;
+        }
+
+        h2, h1 {
+            color: #ff3366;
+            margin-bottom: 20px;
+        }
+
+        p {
+            color: #444;
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 25px;
+            min-height: 90px;
+        }
+
+        input[type="password"] {
+            width: 80%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #ff758c;
+            border-radius: 25px;
+            text-align: center;
+            outline: none;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            background: #ff3366;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 51, 102, 0.4);
+            transition: 0.3s;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            background: #e60039;
+            transform: scale(1.05);
+        }
+
+        .error-msg {
+            color: #ff0000;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .heart-icon {
+            font-size: 50px;
+            animation: heartbeat 1.2s infinite;
+            margin-bottom: 10px;
+        }
+
+        .page-indicator {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.25); }
+            100% { transform: scale(1); }
+        }
+
+        .floating-heart {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 24px;
+            animation: floatUp 4s linear infinite;
+            bottom: -10px;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- بەشی قوفڵەکە -->
+    <div class="box" id="lockBox">
+        <div style="font-size: 40px; margin-bottom: 10px;">🔒</div>
+        <h2>لینکەکە قوفڵکراوە!</h2>
+        <p>بۆ کردنەوەی ئەم قوفڵە ناوی جوانترین کەسی ژیانت بنووسە:</p>
+        <input type="password" id="passInput" placeholder="رمز لێرە بنووسە...">
+        <br>
+        <button class="btn" onclick="checkPassword()">کردنەوەی قوفڵەکە 🔓</button>
+        <div class="error-msg" id="errorMsg">رمزەکە هەڵەیە گیانەکەم، دووبارە هەوڵ بدەوە! ❌</div>
+    </div>
+
+    <!-- بەشی پەڕە ڕۆمانسییەکان (سەرەتا شاراوەیە) -->
+    <div class="box" id="storyBox" style="display: none;">
+        <div class="heart-icon">💖</div>
+        <div class="page-indicator" id="pageIndicator">پەڕەی ١ لە ١٠</div>
+        <p id="storyText">مەتن</p>
+        <div>
+            <button class="btn" id="prevBtn" onclick="prevPage()" style="display:none;">پێشوو</button>
+            <button class="btn" id="nextBtn" onclick="nextPage()">پەڕەی دواتر ❤️</button>
+        </div>
+    </div>
+
+    <script>
+        // رمزی قوفڵەکە (سانی)
+        const secretCode = "سانی"; 
+
+        // ١٠ پەڕە پڕ لە هەست و ڕۆمانسیەت بۆ سێلین
+        const pages = [
+            "بەخێر بێیت سێلین گیان... لەم پەڕانەدا دەمەوێ کەمێک لەو هەستانەت بۆ باس بکەم کە لە دڵمدایە. با دەست پێبکەین...",
+            "کاتێک هزرم بۆ لای تۆ دەچێت، هەموو دیمەنەکانی دەوروبەرم جوانتر دەبن، وەک ئەوەی جیهان تەنها بۆ ئێمە دروستکرابێت.",
+            "تۆ نەک هەر خۆشەویستی ژیانمی، بەڵکو ئەو ئارامییە دەبەخشیت کە هەمیشە لە ژیانمدا بەدوایدا دەگەڕام.",
+            "پێکەنینەکانت دەرمانن بۆ هەموو ناخۆشییەک، هەر کاتێک دەمتبینم، دڵنیابە هەموو دنیام لەبیر دەکەم.",
+            "ڕەنگە هەندێک جار نەتوانم بە زمان هەموو ئەو شتە جوانانە دەرببڕم کە بۆت هەمە، بەڵام دڵنیابە قووڵترین شوێنی دڵم بۆ تووە.",
+            "هەموু بەیانییەک کە چاو هەڵدێنم، یەکەم بیری جوانی تووی کە دێتە مێشکم و رۆژەکەم پێ ڕووناک دەکاتەوە.",
+            "تۆ وەک ئەو ئەستێرە درەوشاوەیەی کە ڕێگەی تاریکی ژیانم ڕووناک دەکەیتەوە، سوپاس کە هەی و هەمیشە لەگەڵ منی.",
+            "هیچ قسە و پیتێک ناتوانێت گەورەیی ئەو خۆشەویستییە دەرببڕێت کە بۆت هەبێت، تۆ لە هەموو وشەیەک جوانتر وپیرۆزتری.",
+            "ئێستا کە گەیشتوویتە کۆتا پەڕەکان، دەمەوێ یەک شت بزانیت: تا هەناسەی تێدابم، هەرگیز خۆشەویستیم بۆت کەم ناكات.",
+            "کۆتا پەیام: تۆ تەنها خۆشەویستی من نیستی، تۆ هەموو ژیانی منی سێلین گیان! هەمیشە بەختەوەر بژین پێکەوە ❤️🌹"
+        ];
+
+        let currentPage = 0;
+
+        function checkPassword() {
+            const userInput = document.getElementById('passInput').value;
+            const errorMsg = document.getElementById('errorMsg');
+
+            if (userInput === secretCode) {
+                document.getElementById('lockBox').style.display = 'none';
+                document.getElementById('storyBox').style.display = 'block';
+                updatePage();
+                setInterval(createHeart, 300);
+            } else {
+                errorMsg.style.display = 'block';
+            }
+        }
+
+        function updatePage() {
+            document.getElementById('storyText').innerText = pages[currentPage];
+            document.getElementById('pageIndicator').innerText = `پەڕەی ${currentPage + 1} لە ${pages.length}`;
+
+            // کۆنترۆڵکردنی دوگمەکان
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (currentPage === 0) {
+                prevBtn.style.display = 'none';
+            } else {
+                prevBtn.style.display = 'inline-block';
+            }
+
+            if (currentPage === pages.length - 1) {
+                nextBtn.innerText = "کۆتایی ❤️";
+            } else {
+                nextBtn.innerText = "پەڕەی دواتر ❤️";
+            }
+        }
+
+        function nextPage() {
+            if (currentPage < pages.length - 1) {
+                currentPage++;
+                updatePage();
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                updatePage();
+            }
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('floating-heart');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+            heart.style.animationDuration = (Math.random() * 2 + 3) + 's';
+            document.body.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 4000);
+        }
+    </script>
+
+</body>
+</html>
